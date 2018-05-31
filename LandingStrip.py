@@ -38,9 +38,9 @@ class Camera():
 	def apply(self, light):
 		tmp = np.dot(self.matTrans,light.pos)
 		tmp = np.dot(self.Rot,tmp)
-		tmp =np.dot(self.Proj,tmp)
-		tmp = tmp/tmp[3]
-		return tmp
+		tmp2 =np.dot(self.Proj,tmp)
+		tmp2 = tmp2/tmp2[3]
+		return tmp2, tmp
 
 lightsworldspace =[]
 
@@ -69,13 +69,12 @@ while True:
 	Cam = Camera(cx,cy,cz,fov,0.01,3000,cp)
 	screen.fill((0,0,0))
 	for l in lightsworldspace:
-		tmp = Cam.apply(l)
-		tmp2 = np.dot(Cam.matTrans, l.pos)
+		tmp, tmp2 = Cam.apply(l)
 		x = 0.5 + tmp[0]
 		y = 0.5 + tmp[1]
 		x *= width
 		y *= height
-		if ((tmp[1]<=0 and tmp2[1]<=0) or (tmp[1]>0 and tmp2[1]>0)):
+		if tmp2[2] < 0:
 			pygame.draw.circle(screen,l.col,(int(x),int(y)),1)
 	#Leave this in otherwise it crashes like your grades
 	for event in pygame.event.get():

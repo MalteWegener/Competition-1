@@ -1,3 +1,13 @@
+"""
+This file just provides some basic 3D matrices, for the render engine
+Please dont touch other wise the game will fuck up harder than you in thermo
+if you want to get some nice reading on 3d projection,
+go to:
+https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/projection-matrix-introduction
+If you dont understand just use it
+its just linear algebra
+"""
+
 import numpy as np
 from math import *
 
@@ -57,5 +67,8 @@ def Rotz(t):
 	Rot[1,1] = cos(t)
 	return Rot
 
-def Rot(r):
+def CamRot(r):
 	return Rotz(r[2]).dot(Rotx(r[0])).dot(Roty(r[1]))
+
+def Rot(r):
+	return Rotx(r[0]).dot(Roty(r[1])).dot(Rotz(r[2]))

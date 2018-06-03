@@ -1,0 +1,134 @@
+
+
+\chapter{Compression Panel Design}
+The compression panel consists of the skin and stringers. These  components can fail at different times, which consequently affects the behaviour of the rest of the panel. Therefore progressive failure analysis was done to analyze how the panel was going to compress.
+\section{Requirements}
+
+The compression panels have the following requirements, (\cite{manual}):
+\begin{enumerate}
+    \item Withstand a compressive ultimate load of 30kN without failure
+    \item Withstand a compressive limit load of 15kN without buckling
+    \item Minimize the weight of the panel
+\end{enumerate}
+In addition to these performance requirements; the specific dimensions of the top panel are as follows:
+
+\begin{figure}[H]
+    \centering
+     %\includegraphics[width=1.0\textwidth]{Image.eps}
+    \includegraphics[angle=0,origin=c,width=0.9\textwidth,height=0.5\textheight,keepaspectratio]{Images/requirements.png}
+    \caption{Dimensions and Clamped area of Compression Panel, (\cite{manual})}
+    \label{fig:my_label}
+\end{figure}
+
+
+
+\section{Failure Calculations}
+
+Progressive failure analysis consists of calculating all the failure modes (in our case the buckling modes) to predict how each component is going to fail chronologically; thus we know which individual component fails first and the progression of this failure until the entire panel has failed.
+
+In this procedure the critical force for every mode of buckling was calculated. If the applied force exceeded the critical force, the corresponding part was taken out of the calculations when the force was increased. With this procedure the sequence of buckling and failure could be accurately predicted.
+It was assumed that there were 3 different modes of buckling which could occur during the test.
+\begin{enumerate}
+    \item Lateral buckling
+\begin{equation}
+    \label{Lateral Buckling}
+    \sigma_{cr}=K_c*E*(\frac{t}{b})^2 
+\end{equation}
+    \item Inter rivet bucking
+\begin{equation}
+    \label{Inter Rivet Buckling}
+    \sigma_{ir}=0.9*c*E*(\frac{t}{s})^2 
+\end{equation}
+    \item Buckling of the entire Panel
+\begin{equation}
+    \label{Column Buckling}
+    F=\frac{c*\pi*E*I}{L^2}
+\end{equation}
+\end{enumerate}
+The effect of lateral buckling on the stiffness can be derived from Hooke's Law (\cite{MOMBOOK}) and the boundary conditions of the section. When the section is in compression, Hooke's Law predicts that the skin expands in lateral direction if it is compressed in the longitudinal direction. This is prohibited by the stringers attached to both sides of the section.
+
+\begin{equation}
+    \label{Strain in lateral Direction}
+    \epsilon_{lat} = 0 =\frac{\sigma_{lat}}{E} -v*\frac{\sigma_{lon}}{E}
+\end{equation}
+From this it can be shown that the stiffness of the skin in longitudinal direction before it buckles in lateral direction is this relationship:
+
+\begin{equation}
+    \label{lalala}
+    \frac{\sigma_{long}}{\epsilon_{long}}=\frac{E}{1-v^2}
+\end{equation}
+
+In combination with the formulas for buckling the behaviour in the test can be modeled.
+\section{Progressive Failure Analysis of Original Panel}
+
+Using the theory above, progressive failure analysis of the original top panel could be performed. The results are as follows: Initially the first mode of failure will be inter-rivet buckling at 14.8 kN. Then Lateral/Sheet buckling will follow at a load of 15.1kN; then according to the analysis, column buckling will only occur at a load of 98.7kN.
+
+The configuration of the original panel is the same as for the original wing box. It consists of an aluminium sheet of 0.8mm with 7 L-shaped stringers of 20 mm height and width and 1.5 mm thickness.
+
+\section{Redesign Panel Configuration}
+To optimize for weight, first the Material Indices for the different components were determined.
+For the skin panel, the Material Index is $MI=\frac{E^{\frac{1}{3}}}{\rho}$ and for the stringers it is $MI=\frac{E^{\frac{1}{2}}}{\rho}$.\cite{BOIIIII} For both of the components, Aluminium has a better Material Index, which makes it a better fit for the panel than steel.
+To ensure a homogeneous compression, it is required for the panel to have a symmetric placement of stringers. Ignoring the amount of rivets, this gives 1260 different, not necessarily unique, design choices.
+All of these designs were checked for viability with different amount of rivets and then sorted by mass. To obtain the optimal result, the lightest panel choice for every number of rivets per stringer, were plotted against their mass.
+To perform this task in a reasonable time, a program was written. The program calculates the critical stresses for buckling of every mode and changes the stiffness of the different components according to the sequence of failure.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{Images/weight.png}
+    \caption{Number of Rivets against Panel Mass}
+    \label{fig:my_label}
+\end{figure}
+
+From this it could be concluded that the optimal panel has 11 rivets per stringer and would weigh 0.914 kilograms.
+The chosen panel consists of a 1mm thick skin Aluminium Panel and seven L-shaped Aluminium stringers with width and height of 15 mm, 4 of which have a thickness of 1.5mm and the remaining 3 have a thickness of 1mm.
+
+It was calculated that first buckling would occur in the lateral direction at 15.13 kN. After that at, 18.2 kN, inter rivet buckling would occur, which will ultimately lead to failure at 34.4 kN. Therefore the panel fulfills all the requirements and has a weight reduction of 16.3\% compared to the original panel.
+
+The exact configuration of the redesigned panel can be found in the Appendix A.2.
+
+\section{Production Plan}
+
+
+The wing-box is made of parts all riveted together, these are all put together in the
+following steps. If there is any confusion during the production process, one can refer to the CATIA models in the appendix of this document:
+\begin{enumerate}
+\item The parts and their respective stringers will be divided into two groups. These groups will be divided as such: 
+    \begin{itemize}
+        \item Top skin panel and stringers for the original design: four members
+        \item Top skin panel and stringer for the redesign: five members
+        \item These two groups will then gather tools as follows:
+        Each group will have one drilling machine as well as clamps to hold the stringers and stiffeners in place during the drilling.
+    \end{itemize}
+\item Since the panels are being tested for compression this time, there are some changes regarding the clamping mechanism. Make sure there are no rivets 35 mm from either end.
+\begin{itemize}
+
+     \item The groups must measure and cut the stringers according to the measurements provided by the calculations. These cuts must be done using the band saw. A tutor must be present during the use of the band saw and hearing protection must be worn.
+     \end{itemize}
+\item Once the stringers and stiffeners are clamped the groups must indicate the hole locations on each of their respective sub-parts; slightly indent the plate at the location of the holes for accurate drilling and pre-drill the holes. The spacing of the holes is pre-determined through calculations relating to stress distributions. Remember to place the wooden sacrifice plates underneath the drilling areas in order to protect the table from the drills.
+\item Once the pre-drilling is done, drill all the holes; using the bigger size round clamp.
+\item After the holes have been drilled, use the de-burring machine to de-bur the hole areas.
+\subitem This can be done by un-clamping the stringers from the skin panel and then subsequently de-burring the hole and the region around the holes.
+\item The stringers are then riveted onto the top panel. Again, the spacing and number of stringers used are pre-determined by calculations in previous sections. 
+    \subitem These holes must be riveted with the pop rivet guns. Since there are only two of these in total, each group can use one and work simultaneously. If there are any mistakes made during the riveting procedures, the rivet must be drilled out, and slightly larger rivets must be riveted in.
+\item Make sure to use the drill jigs in order to drill holes on both ends of the panel to attach the clamp and testing rig to the wing box. 
+\subitem Place the caps onto the diagonal and horizontal pieces, and simply drill through the holes on the caps to drill holes through the two skin sheets. 
+\item Make sure to analyze the entire wing box for any imperfections. 
+\end{enumerate}
+
+\chapter{Introduction}
+
+A wing box is a structural element that falls under the Primary Structure [PS] category of an aircraft.The purpose of primary structure elements is to properly manage the external forces experienced during operation and convert them into internal forces that are properly distributed within the aircraft. In our previous report, Wing Box Test Report (\cite{report}), we analyzed the test results for our original wing box and drew conclusions for the redesign phase.\\
+\\The aim of this report is to redesign the top of our wing box using compression panels, which represent the compression loading in the box structure, while minimizing weight. We will design and construct two compression panels: an original panel, with the same sheet thickness, stringer number, stringer type, stringer positioning, and same material as our original wing box design; and a redesign panel, with additional choices for sheet thickness, stringer geometry, stringer number and spacing, fastener number and spacing, and material. This stiffened panel is a section of the upper skin of the wing box. The location chosen should be approximately 2/3 from the tip as this is where we expect failure to occur.\\
+In section 2.1 we will outline the set of requirements that the panels must follow (\cite{manual}):
+ \begin{enumerate}
+     \item Withstand a compressive ultimate load of 30 kN without failure
+     \item Withstand a compressive limit load of 15 kN without buckling
+     \item Minimize the weight of the panel
+ \end{enumerate}\\
+Before performing the necessary failure calculations, we must first analyze the failure modes: limit failure (buckling) and ultimate failure. There are three types of buckling to consider: sheet, shear, and inter-rivet. Because the panel will undergo pure compression, we can neglect shear stress. However, an extra buckling mode called column buckling is now introduced in the redesign.
+
+\\After this we can begin the progressive failure analysis, which is further explained in section 2.2. In this analysis we start by performing calculations predicting all types of buckling in order to determine which component will be the first to buckle and at what load this will occur. When a component buckles, we can assume it to have zero stiffness in the following calculations. In this way we can perform a step by step analysis until all the components, and therefore the wing box, have failed.
+
+\\When this procedure is done, we will have achieved our final panel configuration (Section 2.3). Finally, we can move on to the manufacturing of the wing box. We will use our own CATIA drawings to aid in the production process. Furthermore, we must take into account that there can be no riveting where the panel will be clamped. The production plan is outlined in Section 2.4.
+
+\\Once all of the failure calculations are taken into account and the proper steps are followed, there should be little to no deviation from the design requirements previously stated. The original panel and the events leading up to its failure will be taken into account for the redesign.

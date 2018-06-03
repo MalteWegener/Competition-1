@@ -58,4 +58,4 @@ def Rotz(t):
 	return Rot
 
 def Rot(r):
-	return Rotx(r[0]).dot(Roty(r[1])).dot(Rotz(r[2]))
+	return Rotz(r[2]).dot(Rotx(r[0])).dot(Roty(r[1]))

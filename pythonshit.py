@@ -17,7 +17,7 @@ class Camera:
 		return tmp2,tmp
 
 	def getunit(self):
-		return (-1*self.Rot).dot([0.,0.,1.,0.])
+		return (self.Rot).dot([0.,0.,1.,0.])
 
 class Runway:
 	def __init__(self):
@@ -52,7 +52,6 @@ screen = pygame.display.set_mode((width,height))
 
 while True:
 	cam = Camera(cpos,crot,width,height)
-	print(cam.getunit()[:3])
 	cpos = cpos + cam.getunit()[:3]
 	screen.fill((0,0,0))
 	for event in pygame.event.get():

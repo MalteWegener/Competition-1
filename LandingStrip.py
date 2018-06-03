@@ -130,7 +130,7 @@ while True:
 		crot[2] -= 1
 
 	if keys[pygame.K_SPACE]:
-		print(Cam.getunit())
-		cpos += Cam.getunit()
+		#print(Cam.getunit())
+		cpos += 5*Cam.getunit()
 
 	pygame.display.update()

@@ -291,12 +291,12 @@ while True:
 		plane.roll(-2,dt)
 
 	if keys[pygame.K_UP]:
-		plane.acc += 0.1
+		plane.acc += 0.5
 	if keys[pygame.K_DOWN]:
-		plane.acc -= 0.1
+		plane.acc -= 0.5
 
 	screen.blit(myfont2.render("Loops are now allowed",1,(0,255,255)),(10,10))
 	screen.blit(myfont.render(str(round(1/dt))+"FPS",1,(0,255,255)),(10,50))
-	screen.blit(myfont.render(str(plane.acc)+"m/s^2",1,(0,255,255)),(10,70))
+	screen.blit(myfont.render(str(round(plane.acc,2))+"m/s^2",1,(0,255,255)),(10,70))
 	pygame.display.update()
 	lastt = curt

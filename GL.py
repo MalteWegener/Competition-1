@@ -68,10 +68,34 @@ def Rotz(t):
 	return Rot
 
 def CamRot(r):
-	return Roty(r[1]).dot(Rotx(r[0])).dot(Rotz(r[2]))
+	return Rotz(r[2]).dot(Roty(r[1])).dot(Rotx(r[0]))
 
 def Rot(r):
 	return Rotx(r[0]).dot(Roty(r[1])).dot(Rotz(r[2]))
 
 def Rot2D(a):
 	return np.array([[cos(a),-sin(a)],[sin(a),cos(a)]])
+
+def UniversalRotationRad(angle, vector):
+	#normalize to handle homogeneous rotations too
+	u = vector[:3]
+	a = angle
+	Mat = np.zeros([3,3])
+
+	#I took that matrix from the internet
+	Mat[0,0] = cos(a)+u[0]**2*(1-cos(a))
+	Mat[0,1] = u[0]*u[1]*(1-cos(a))-u[2]*sin(a)
+	Mat[0,2] = u[0]*u[2]*(1-cos(a))+u[1]*sin(a)
+
+	Mat[1,0] = u[1]*u[0]*(1-cos(a))+u[2]*sin(a)
+	Mat[1,1] = cos(a)+u[1]**2*(1-cos(a))
+	Mat[1,2] = u[1]*u[2]*(1-cos(a))-u[0]*sin(a)
+
+	Mat[2,0] = u[0]*u[2]*(1-cos(a))-u[1]*sin(a)
+	Mat[2,1] = u[1]*u[2]*(1-cos(a))+u[0]*sin(a)
+	Mat[2,2] = cos(a)+u[2]**2*(1-cos(a))
+
+	return Mat
+
+def UniversalRotationDeg(angle, vector):
+	return UniversalRotationRad(radians(angle),vector)

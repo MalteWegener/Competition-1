@@ -23,7 +23,7 @@ import numpy as np
 from math import *
 import GL
 import sys
-from flightmodel import Airplane
+from flightmodel import BetterAirplane
 
 #This class provides an abstraction for the game scene
 #maybe writing it like dis makes it a lot more abstract
@@ -59,7 +59,17 @@ class Camera:
 
 		#This gives back the unit vector in which the camera points
 	def getunit(self):
-		return np.dot(GL.Rot(self.angles),np.array([0,0,-1,0]))[:3]
+		return np.dot(GL.CamRot(self.angles),np.array([0,0,-1,0]))[:3]
+
+#Better CAm to be used with BetterAirplane
+class BetterCam(Camera):
+	def __init__(self,pos,rot,width,height):
+		#becuase we have the position and rotation
+		#of the cam in the world frame, but we need to
+		#transform the world angainst the camera so negative all of it
+		self.Translation = GL.TranslateNeg(pos)
+		self.Rotation = rot
+		self.Projection = GL.Projection(width/height,60,0.1,3000)
 
 #This provides a base for all renderable objects
 #Real Object Oriented Languages, would have the pussybility
@@ -154,19 +164,15 @@ class WTC(Runway):
 		return ((self.pos[0]<=cpos[0]<=self.pos[0]+20) and (self.pos[1]<=cpos[2]<=self.pos[1]+20)) and 0<=self.pos[1]<=7*50
 
 class Horizon(GameObject):
-	def setpos(self, cpos, crot):
+	def setpos(self, cpos):
 		self.r = sqrt(2*6371000)*sqrt(abs(cpos[1]))
 		self.p = np.array([cpos[0],cpos[1]])
-		"""self.p = cpos+cam.getunit()*s
-		self.p[1] = 0
-		self.p = np.array([self.p[0],self.p[1],self.p[2],1])
-		self.angle = crot[2]"""
 
-	def __init__(self, cpos, crot):
-		self.setpos(cpos,crot)
+	def __init__(self, cpos):
+		self.setpos(cpos)
 
-	def update(self, cpos, crot):
-		self.setpos(cpos,crot)
+	def update(self, cpos):
+		self.setpos(cpos)
 
 	#sadly we cant use the old render method so just make a new one
 	def render(self, screen, cam, width, height):
@@ -192,22 +198,9 @@ class Horizon(GameObject):
 			pygame.draw.line(screen, (0,255,0),renders[i],renders[i+1],1)
 
 
-		"""relpos, renderpos = cam.apply(self.p)
-		renderpos = renderpos/renderpos[3]
-		#then we make it to x,y space and invert y because python is a
-		#special child
-		x = width/2
-		y = (1-renderpos[1])*height/2/renderpos[2]
-		l = sqrt(width**2+height**2)
-		p1 = (x+l*cos(radians(self.angle%180)),y+l*sin(radians(self.angle%180)))
-		p2 = (x-l*cos(radians(self.angle%180)),y-l*sin(radians(self.angle%180)))
-
-		pygame.draw.line(screen, (0,255,0),p1,p2,1)"""
-
-
 
 #quick mockup nigga
-plane = Airplane(np.array([-40,200,400]))
+plane = BetterAirplane(np.array([-40,200,400]))
 
 width = 800
 height = 500
@@ -216,14 +209,14 @@ pygame.init()
 screen = pygame.display.set_mode((width,height))
 
 scene = Scene()
-cam = Camera(plane.pos,plane.rot,width,height)
+cam = BetterCam(plane.pos,plane.getrot(),width,height)
 #if you dont want to have the runway transformed give it 4*4 Identity matrixes
 #If you have patience and a fucking strong pc, you could build the whole world outta it
 scene.objects.append(Runway(np.identity(4),np.identity(4)))
 scene.objects.append(Runway(GL.Translate([50,0,20]),GL.Roty(-30)))
 scene.objects.append(WTC(GL.Translate([-100,0,0]),np.identity(4)))
 scene.objects.append(WTC(GL.Translate([-150,0,0]),np.identity(4)))
-scene.objects.append(Horizon(plane.pos,plane.rot))
+scene.objects.append(Horizon(plane.pos))
 
 img = pygame.image.load("george-bush.bmp")
 myfont = pygame.font.SysFont("monospace", 23)
@@ -236,8 +229,8 @@ while True:
 
 	dt = (curt-lastt)/1000 #makey makey deytey
 
-	cam = Camera(plane.pos,plane.rot,width,height)
-	plane.move(cam.getunit(),dt)
+	cam = BetterCam(plane.pos,plane.getrot(),width,height)
+	plane.move(dt)
 	screen.fill((15,15,15))
 	scene.render(screen, cam, width, height)
 
@@ -259,25 +252,25 @@ while True:
 	#there  must be a better way to do this, but im not that good with python
 	#so i'll leave it like this
 	for i in range(len(scene.objects)):
-		if type(scene.objects[i]) == type(Horizon(plane.pos, plane.rot)):
-			scene.objects[i].update(plane.pos, plane.rot)
+		if type(scene.objects[i]) == type(Horizon(plane.pos)):
+			scene.objects[i].update(plane.pos)
 
 	#Stuff to control
 	keys = pygame.key.get_pressed()
 	if keys[pygame.K_w]:
-		plane.pitch(0.5)
+		plane.pitch(1)
 	if keys[pygame.K_s]:
-		plane.pitch(-0.5)
+		plane.pitch(-1)
 
 	if keys[pygame.K_a]:
-		plane.yaw(0.5)
+		plane.yaw(1)
 	if keys[pygame.K_d]:
-		plane.yaw(-0.5)
+		plane.yaw(-1)
 
 	if keys[pygame.K_q]:
-		plane.roll(0.5)
+		plane.roll(1)
 	if keys[pygame.K_e]:
-		plane.roll(-0.5)
+		plane.roll(-1)
 
 	if keys[pygame.K_UP]:
 		plane.acc += 1

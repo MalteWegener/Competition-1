@@ -221,8 +221,8 @@ cam = Camera(plane.pos,plane.rot,width,height)
 #If you have patience and a fucking strong pc, you could build the whole world outta it
 scene.objects.append(Runway(np.identity(4),np.identity(4)))
 scene.objects.append(Runway(GL.Translate([50,0,20]),GL.Roty(-30)))
-scene.objects.append(WTC(GL.Translate([-100,0,-1500]),np.identity(4)))
-scene.objects.append(WTC(GL.Translate([-150,0,-1500]),np.identity(4)))
+scene.objects.append(WTC(GL.Translate([-100,0,0]),np.identity(4)))
+scene.objects.append(WTC(GL.Translate([-150,0,0]),np.identity(4)))
 scene.objects.append(Horizon(plane.pos,plane.rot))
 
 img = pygame.image.load("george-bush.bmp")

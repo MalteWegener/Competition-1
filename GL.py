@@ -68,7 +68,10 @@ def Rotz(t):
 	return Rot
 
 def CamRot(r):
-	return Rotz(r[2]).dot(Rotx(r[0])).dot(Roty(r[1]))
+	return Roty(r[1]).dot(Rotx(r[0])).dot(Rotz(r[2]))
 
 def Rot(r):
 	return Rotx(r[0]).dot(Roty(r[1])).dot(Rotz(r[2]))
+
+def Rot2D(a):
+	return np.array([[cos(a),-sin(a)],[sin(a),cos(a)]])

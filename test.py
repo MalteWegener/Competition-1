@@ -11,6 +11,7 @@ currenttick = pygame.time.get_ticks()
 gates = []
 gates.append(utils.Gate())
 myfont = pygame.font.SysFont("monospace", 30)
+myfont = pygame.font.SysFont("monospace", 5)
 
 while True:
 	x,y = pygame.mouse.get_pos()

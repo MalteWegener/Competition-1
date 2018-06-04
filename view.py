@@ -13,6 +13,9 @@
 ##
 ############
 
+
+Also if you no like meme, turn off television now.
+Parental Advisory is reccomended after this Point
 """
 
 import pygame
@@ -25,11 +28,11 @@ from flightmodel import Airplane
 #This class provides an abstraction for the game scene
 #maybe writing it like dis makes it a lot more abstract
 #but it will make extending the game way easier
-# Rule No.0: You dont write code, you write solutions
 class Scene:
 	def __init__(self):
 		self.objects = []
 
+	#isnt this beatiful overcomplication
 	def render(self, screen, cam, width, height):
 		for o in self.objects:
 			o.render(screen, cam, width, height)
@@ -60,7 +63,7 @@ class Camera:
 
 #This provides a base for all renderable objects
 #Real Object Oriented Languages, would have the pussybility
-#to make this class virtual, and the class abstract.
+#to make this classes mathods virtual, and the class abstract.
 #So this class cant be build, but if something inherits from
 #it has all functionality
 class GameObject:
@@ -148,14 +151,16 @@ class WTC(Runway):
 	#Display a bush picture then
 	#But psscht its top secret
 	def IsHeBush(self, cpos):
-		return ((self.pos[0]<=cpos[0]<=self.pos[0]+20) and (self.pos[1]<=cpos[2]<=self.pos[1]+20))
+		return ((self.pos[0]<=cpos[0]<=self.pos[0]+20) and (self.pos[1]<=cpos[2]<=self.pos[1]+20)) and 0<=self.pos[1]<=7*50
 
 class Horizon(GameObject):
 	def setpos(self, cpos, crot):
-		s = sqrt(2*6371000)*sqrt(abs(cpos[1]))
-		bearing = crot[1]
-		self.p = np.array([cpos[0]+s*sin(radians(-bearing)),0,cpos[2]+s*-cos(radians(-bearing)),1])
-		self.angle = crot[2]
+		self.r = sqrt(2*6371000)*sqrt(abs(cpos[1]))
+		self.p = np.array([cpos[0],cpos[1]])
+		"""self.p = cpos+cam.getunit()*s
+		self.p[1] = 0
+		self.p = np.array([self.p[0],self.p[1],self.p[2],1])
+		self.angle = crot[2]"""
 
 	def __init__(self, cpos, crot):
 		self.setpos(cpos,crot)
@@ -165,8 +170,29 @@ class Horizon(GameObject):
 
 	#sadly we cant use the old render method so just make a new one
 	def render(self, screen, cam, width, height):
-		#first one then the other wow such magic
-		relpos, renderpos = cam.apply(self.p)
+		
+		ps = []
+		for angle in range(0,360,20):
+			a = radians(angle)
+			tmp = self.p + GL.Rot2D(a).dot(np.array([self.r,0]))
+			ps.append(np.array([tmp[0],0,tmp[1],1]))
+
+		renders = []
+		for d in ps:
+			relpos, renderpos = cam.apply(d)
+			renderpos = renderpos/renderpos[3]
+			#then we make it to x,y space and invert y because python is a
+			#special child
+			x = (1+renderpos[0])*width/2/renderpos[2]
+			y = (1-renderpos[1])*height/2/renderpos[2]
+			if relpos[2] < 0 and -400<=x<=width+400 and -400<=y<=height+400:
+				renders.append((x,y))
+
+		for i in range(len(renders)-1):
+			pygame.draw.line(screen, (0,255,0),renders[i],renders[i+1],1)
+
+
+		"""relpos, renderpos = cam.apply(self.p)
 		renderpos = renderpos/renderpos[3]
 		#then we make it to x,y space and invert y because python is a
 		#special child
@@ -176,7 +202,7 @@ class Horizon(GameObject):
 		p1 = (x+l*cos(radians(self.angle%180)),y+l*sin(radians(self.angle%180)))
 		p2 = (x-l*cos(radians(self.angle%180)),y-l*sin(radians(self.angle%180)))
 
-		pygame.draw.line(screen, (0,255,0),p1,p2,1)
+		pygame.draw.line(screen, (0,255,0),p1,p2,1)"""
 
 
 
@@ -195,27 +221,39 @@ cam = Camera(plane.pos,plane.rot,width,height)
 #If you have patience and a fucking strong pc, you could build the whole world outta it
 scene.objects.append(Runway(np.identity(4),np.identity(4)))
 scene.objects.append(Runway(GL.Translate([50,0,20]),GL.Roty(-30)))
-scene.objects.append(WTC(GL.Translate([-50,0,0]),np.identity(4)))
-scene.objects.append(WTC(GL.Translate([-100,0,0]),np.identity(4)))
+scene.objects.append(WTC(GL.Translate([-100,0,-1500]),np.identity(4)))
+scene.objects.append(WTC(GL.Translate([-150,0,-1500]),np.identity(4)))
 scene.objects.append(Horizon(plane.pos,plane.rot))
 
 img = pygame.image.load("george-bush.bmp")
+myfont = pygame.font.SysFont("monospace", 23)
+myfont2 = pygame.font.SysFont("monospace", 10)
+bush = False
 
+lastt = 0
 while True:
-	#we move at the direction we look at the moment
-	plane.pos = plane.pos + cam.getunit()
+	curt = pygame.time.get_ticks()
+
+	dt = (curt-lastt)/1000 #makey makey deytey
+
 	cam = Camera(plane.pos,plane.rot,width,height)
+	plane.move(cam.getunit(),dt)
 	screen.fill((15,15,15))
 	scene.render(screen, cam, width, height)
+
+	#leave in or Sybrand will visit you
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
 			sys.exit()
 
+	#For the stuff thing
 	for p in scene.objects:
-		if p.IsHeBush(plane.pos):
-			print("debug")
-			screen.blit(img,(width/2,height/2))
+		if p.IsHeBush(plane.pos) or bush:
+			tmp = img.get_rect().size
+			bush = True
+			screen.blit(img,(width/2-tmp[0]/2,height/2-tmp[1]/2))
+			screen.blit(myfont.render("Bush want's to know your Location",1,(255,0,0)),(width/2-tmp[0]/2-75,height/2+tmp[1]/2))
 			break
 
 	#there  must be a better way to do this, but im not that good with python
@@ -241,4 +279,11 @@ while True:
 	if keys[pygame.K_e]:
 		plane.roll(-0.5)
 
+	if keys[pygame.K_UP]:
+		plane.acc += 1
+	if keys[pygame.K_DOWN]:
+		plane.acc -= 1
+
+	screen.blit(myfont2.render("Please don't fly sick da loops",1,(0,255,255)),(10,10))
 	pygame.display.update()
+	lastt = curt

@@ -35,17 +35,40 @@ class BetterAirplane():
 		self.yawaxis = np.array([0,-1,0])
 		self.pitchaxis = np.array([1,0,0])
 		self.rollaxis = np.array([0,0,-1])
-		self.acc = 0
+		self.acc = 40
+		self.maxpitchspeed = 20
+		self.maxyawspeed = 15
+		self.maxrollspeed = 20
 
-	def pitch(self,angle):
+	def pitch(self,angle, dt):
+		if angle > 0:
+			angle = self.maxpitchspeed*dt
+		else:
+			angle = -self.maxpitchspeed*dt
+
 		self.yawaxis = GL.UniversalRotationDeg(angle,self.pitchaxis).dot(self.yawaxis)
 		self.rollaxis = GL.UniversalRotationDeg(angle,self.pitchaxis).dot(self.rollaxis)
 
-	def yaw(self,angle):
+	def pitchabs(self,angle):
+
+		self.yawaxis = GL.UniversalRotationDeg(angle,self.pitchaxis).dot(self.yawaxis)
+		self.rollaxis = GL.UniversalRotationDeg(angle,self.pitchaxis).dot(self.rollaxis)
+
+	def yaw(self,angle, dt):
+		if angle > 0:
+			angle = self.maxyawspeed*dt
+		else:
+			angle = -self.maxyawspeed*dt
+
 		self.pitchaxis = GL.UniversalRotationDeg(-angle,self.yawaxis).dot(self.pitchaxis)
 		self.rollaxis = GL.UniversalRotationDeg(-angle,self.yawaxis).dot(self.rollaxis)
 
-	def roll(self,angle):
+	def roll(self,angle, dt):
+		if angle > 0:
+			angle = self.maxrollspeed*dt
+		else:
+			angle = -self.maxrollspeed*dt
+
 		self.yawaxis = GL.UniversalRotationDeg(-angle,self.rollaxis).dot(self.yawaxis)
 		self.pitchaxis = GL.UniversalRotationDeg(-angle,self.rollaxis).dot(self.pitchaxis)
 
@@ -79,3 +102,6 @@ class BetterAirplane():
 	def move(self, dt):
 		self.v += dt * self.acc
 		self.pos = self.pos + self.v*self.rollaxis*dt
+		#make landy landy
+		if self.pos[1] < 0:
+			self.pos[1] = 0

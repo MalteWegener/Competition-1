@@ -36,6 +36,7 @@ class Scene:
 	def render(self, screen, cam, width, height):
 		for o in self.objects:
 			o.render(screen, cam, width, height)
+		pygame.draw.circle(screen,(120,255,255), (int(width/2),int(height/2)),10,1)
 
 #That camera aint a snitch, because it can look away
 class Camera:
@@ -163,6 +164,22 @@ class WTC(Runway):
 	def IsHeBush(self, cpos):
 		return ((self.pos[0]<=cpos[0]<=self.pos[0]+20) and (self.pos[1]<=cpos[2]<=self.pos[1]+20)) and 0<=self.pos[1]<=7*50
 
+class Gate(Runway):
+	def __init__(self,offpos,offrot):
+		self.lights = []
+		
+		for i in range(7):
+			for ang in range(0,360,30):
+				tmppos = GL.Rot2D(radians(ang)).dot(np.array([0,7-i]))
+				tmppos = np.array([tmppos[0],i*5,tmppos[1],1])
+				self.lights.append(light(offpos.dot(offrot).dot(tmppos),(255,0,0) if i % 2 == 0 else (255,255,255)))
+
+		for i in range(7):
+			for ang in range(0,360,30):
+				tmppos = GL.Rot2D(radians(ang)).dot(np.array([0,7-i]))
+				tmppos = np.array([tmppos[0]+50,i*5,tmppos[1],1])
+				self.lights.append(light(offpos.dot(offrot).dot(tmppos),(255,0,0) if i % 2 == 0 else (255,255,255)))
+
 class Horizon(GameObject):
 	def setpos(self, cpos):
 		self.r = sqrt(2*6371000)*sqrt(abs(cpos[1]))
@@ -178,7 +195,7 @@ class Horizon(GameObject):
 	def render(self, screen, cam, width, height):
 		
 		ps = []
-		for angle in range(0,360,20):
+		for angle in range(0,360,10):
 			a = radians(angle)
 			tmp = self.p + GL.Rot2D(a).dot(np.array([self.r,0]))
 			ps.append(np.array([tmp[0],0,tmp[1],1]))
@@ -191,22 +208,21 @@ class Horizon(GameObject):
 			#special child
 			x = (1+renderpos[0])*width/2/renderpos[2]
 			y = (1-renderpos[1])*height/2/renderpos[2]
-			if relpos[2] < 0 and -400<=x<=width+400 and -400<=y<=height+400:
+			if relpos[2] < 0 -700<=x<=width+700 and -700<=y<=height+700:
 				renders.append((x,y))
 
-		for i in range(len(renders)-1):
-			pygame.draw.line(screen, (0,255,0),renders[i],renders[i+1],1)
-
-
+		for i in range(1,len(renders)):
+			pygame.draw.line(screen, (0,255,0),renders[i],renders[i-1],1)
 
 #quick mockup nigga
 plane = BetterAirplane(np.array([-40,200,400]))
+plane.pitchabs(-3)
 
-width = 800
-height = 500
+width = 1920
+height = 1080
 
 pygame.init()
-screen = pygame.display.set_mode((width,height))
+screen = pygame.display.set_mode((width,height),pygame.FULLSCREEN)
 
 scene = Scene()
 cam = BetterCam(plane.pos,plane.getrot(),width,height)
@@ -216,6 +232,8 @@ scene.objects.append(Runway(np.identity(4),np.identity(4)))
 scene.objects.append(Runway(GL.Translate([50,0,20]),GL.Roty(-30)))
 scene.objects.append(WTC(GL.Translate([-100,0,0]),np.identity(4)))
 scene.objects.append(WTC(GL.Translate([-150,0,0]),np.identity(4)))
+scene.objects.append(Gate(GL.Translate([400,0,0]),np.identity(4)))
+scene.objects.append(Gate(GL.Translate([400,0,-500]),GL.Roty(90)))
 scene.objects.append(Horizon(plane.pos))
 
 img = pygame.image.load("george-bush.bmp")
@@ -258,25 +276,27 @@ while True:
 	#Stuff to control
 	keys = pygame.key.get_pressed()
 	if keys[pygame.K_w]:
-		plane.pitch(1)
+		plane.pitch(2,dt)
 	if keys[pygame.K_s]:
-		plane.pitch(-1)
+		plane.pitch(-2,dt)
 
 	if keys[pygame.K_a]:
-		plane.yaw(1)
+		plane.yaw(1,dt)
 	if keys[pygame.K_d]:
-		plane.yaw(-1)
+		plane.yaw(-1,dt)
 
 	if keys[pygame.K_q]:
-		plane.roll(1)
+		plane.roll(2,dt)
 	if keys[pygame.K_e]:
-		plane.roll(-1)
+		plane.roll(-2,dt)
 
 	if keys[pygame.K_UP]:
-		plane.acc += 1
+		plane.acc += 0.1
 	if keys[pygame.K_DOWN]:
-		plane.acc -= 1
+		plane.acc -= 0.1
 
-	screen.blit(myfont2.render("Please don't fly sick da loops",1,(0,255,255)),(10,10))
+	screen.blit(myfont2.render("Loops are now allowed",1,(0,255,255)),(10,10))
+	screen.blit(myfont.render(str(round(1/dt))+"FPS",1,(0,255,255)),(10,50))
+	screen.blit(myfont.render(str(plane.acc)+"m/s^2",1,(0,255,255)),(10,70))
 	pygame.display.update()
 	lastt = curt

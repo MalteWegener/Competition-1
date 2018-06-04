@@ -86,7 +86,7 @@ class GameObject:
 #A light is nice and thats why it shoulf be its own
 #object. COuld be a struct, but hey its python
 class light:
-	def __init__(self, pos, colour):
+	def __init__(self, ps, colour):
 		self.pos = pos
 		self.colour = colour
 
@@ -230,7 +230,7 @@ myfont = pygame.font.SysFont("monospace", 23)
 myfont2 = pygame.font.SysFont("monospace", 10)
 bush = False
 
-lastt = 0
+lastt = pygame.time.get_ticks()
 while True:
 	curt = pygame.time.get_ticks()
 

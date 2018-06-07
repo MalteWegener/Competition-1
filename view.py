@@ -218,30 +218,30 @@ class Horizon(GameObject):
 plane = BetterAirplane(np.array([-40,200,400]))
 plane.pitchabs(-3)
 
-width = 1920
-height = 1080
+width = 500
+height = 500
 
 pygame.init()
-screen = pygame.display.set_mode((width,height),pygame.FULLSCREEN)
+screen = pygame.display.set_mode((width,height))
 
 scene = Scene()
 cam = BetterCam(plane.pos,plane.getrot(),width,height)
 #if you dont want to have the runway transformed give it 4*4 Identity matrixes
 #If you have patience and a fucking strong pc, you could build the whole world outta it
 scene.objects.append(Runway(np.identity(4),np.identity(4)))
-#scene.objects.append(Runway(GL.Translate([50,0,20]),GL.Roty(-30)))
-#scene.objects.append(WTC(GL.Translate([-100,0,0]),np.identity(4)))
-#scene.objects.append(WTC(GL.Translate([-150,0,0]),np.identity(4)))
+scene.objects.append(Runway(GL.Translate([50,0,20]),GL.Roty(-30)))
+scene.objects.append(WTC(GL.Translate([-100,0,0]),np.identity(4)))
+scene.objects.append(WTC(GL.Translate([-150,0,0]),np.identity(4)))
 scene.objects.append(Gate(GL.Translate([400,0,0]),np.identity(4)))
-#scene.objects.append(Gate(GL.Translate([400,0,-500]),GL.Roty(90)))
+scene.objects.append(Gate(GL.Translate([400,0,-500]),GL.Roty(90)))
 scene.objects.append(Horizon(plane.pos))
 
 img = pygame.image.load("george-bush.bmp")
-myfont = pygame.font.SysFont("monospace", 23)
-myfont2 = pygame.font.SysFont("monospace", 10)
+myfont = pygame.font.SysFont("tiger", 23)
+myfont2 = pygame.font.SysFont("tiger", 10)
 bush = False
 
-lastt = 0
+lastt = pygame.time.get_ticks()-1
 while True:
 	curt = pygame.time.get_ticks()
 
@@ -298,5 +298,6 @@ while True:
 	screen.blit(myfont2.render("Loops are now allowed",1,(0,255,255)),(10,10))
 	screen.blit(myfont.render(str(round(1/dt))+"FPS",1,(0,255,255)),(10,50))
 	screen.blit(myfont.render(str(round(plane.acc,2))+"m/s^2",1,(0,255,255)),(10,70))
+	screen.blit(myfont.render(str(round(plane.v,2))+"m/s",1,(0,255,255)),(10,90))
 	pygame.display.update()
 	lastt = curt

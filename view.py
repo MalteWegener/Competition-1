@@ -135,7 +135,7 @@ class Runway(GameObject):
 				y = (1-renderpos[1])*height/2/renderpos[2]
 				# now we cutoff if its outside the screen, because that saves time
 				if 0<=x<=width and 0<=y<=height:
-					pygame.draw.circle(screen,l.colour,(int(x),int(y)),1)
+					pygame.draw.circle(screen,l.colour,(int(x),int(y)),int(max(1,(5000-np.linalg.norm(relpos[:3]))/1500)))
 
 #We make a WTC we can crash into
 #we make it inherit from the runway so we dont have to rewrite the render function
@@ -195,7 +195,7 @@ class Horizon(GameObject):
 	def render(self, screen, cam, width, height):
 		
 		ps = []
-		for angle in range(0,360,10):
+		for angle in range(0,360,3):
 			a = radians(angle)
 			tmp = self.p + GL.Rot2D(a).dot(np.array([self.r,0]))
 			ps.append(np.array([tmp[0],0,tmp[1],1]))
@@ -208,11 +208,14 @@ class Horizon(GameObject):
 			#special child
 			x = (1+renderpos[0])*width/2/renderpos[2]
 			y = (1-renderpos[1])*height/2/renderpos[2]
-			if relpos[2] < 0 -700<=x<=width+700 and -700<=y<=height+700:
+			if relpos[2] < 0 and -90<=x<=width+90 and -90<=y<=height+90:
 				renders.append((x,y))
-
-		for i in range(1,len(renders)):
-			pygame.draw.line(screen, (0,255,0),renders[i],renders[i-1],1)
+		if len(renders)>=2:
+			m = (renders[-1][1]-renders[0][1])/(renders[-1][0]-renders[0][0])
+			d = sqrt(width**2+height**2)
+			p1 = (renders[0][0]-d,renders[0][1]-m*d)
+			p2 = (renders[0][0]+d,renders[0][1]+m*d)
+			pygame.draw.line(screen, (0,255,0),p1,p2,1)
 
 #quick mockup nigga
 plane = BetterAirplane(np.array([-40,200,400]))
